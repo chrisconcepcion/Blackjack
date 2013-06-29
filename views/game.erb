@@ -1,0 +1,77 @@
+<h3><%= session[:player_name] %>, show me what you got! </h3>
+
+<% if session[:mode] == nil %>
+	<% session[:dealer_hand][0].hide %>
+<% else %>
+	<% session[:dealer_hand][0].show %>
+<% end %>
+<strong><p> Player: </p></strong>
+<p><strong> Total points:</strong> <%= score(session[:player_hand]) %> </p>
+
+	<p id="card"> <% session[:player_hand].each do |card| %>
+      <%= card.show_picture %>
+    <% end %> </p>
+    
+
+<p> <strong>Dealer: </strong></p>
+<% if session[:mode] == nil %>
+	<p><strong> Total points:</strong> Unknown </p>
+<% else %>
+	<p><strong> Total points:</strong> <%= score(session[:dealer_hand]) %> </p> 
+<% end %>
+<p> <% session[:dealer_hand].each do |card| %>
+      <%= card.show_picture %>
+    <% end %> </p>
+
+
+
+<% check_win %>
+<% if session[:winner] == "Dealer" %>
+		<% session[:money] -= session[:current_bet] %> 
+	<% end %>
+
+
+<% if session[:winner] != nil %>
+	<% if session[:winner] == session[:player_name] %>
+		<%= session[:winner] +" wins!" %>
+		<% session[:money] += session[:current_bet] %>
+		<p>Current money: <%= session[:money] %></p>
+		<p><form id="playagain" action = "/bet" method = "get">
+  			<input type="submit" class="btn btn-success" value = "Play Again?">
+  		</form>
+  		</p>
+	<% elsif session[:money] == 0 %>
+	<p><%= session[:winner] +" wins!" %></p>
+	<p>Current money: <%= session[:money] %></p>
+	<p>You're out of money!</p>
+	<p><form  action = "/start" method = "get">
+  			<input type="submit" class="btn btn-success" value = "Start new game?">
+  		</form>
+  	<% elsif session[:winner] == "Both players" %>
+  	<p>It's a draw!</p>
+  	<p>Current money: <%= session[:money] %></p>
+	<p><form id="playagain" action = "/bet" method = "get">
+  			<input type="submit" class="btn btn-success" value = "Play Again?">
+  		</form>
+  	</p>
+ 	<% else %>
+ 	<%= session[:winner] +" wins!" %>
+ 	<p>Current money: <%= session[:money] %></p>
+	<p><form id="playagain" action = "/bet" method = "get">
+  			<input type="submit" class="btn btn-success" value = "Play Again?">
+  		</form>
+  	</p>
+ 
+	<% end %>
+
+
+	
+<% else %>
+	<p><form id="hit" action = "/game" method = "post">
+  		<input type="submit" class="btn btn-success" value = "Hit">
+  	</form>
+  	<form id="stay" action = "/stay" method = "post">
+  		<input type="submit" class="btn btn-success" value = "Stay">
+  	</form>
+	</p>
+<% end %>
