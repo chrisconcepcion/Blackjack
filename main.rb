@@ -58,7 +58,7 @@ class Card
     else
       image =  "cover"
     end
-    "<img src=\"images/cards/#{image}.jpg\" alt=\"#{self.to_s}\" title=\"#{self.to_s}\" class=\"card_picture\"  >"
+    "<img src=\"images/cards/#{image}.jpg\" alt=\"#{self.to_s}\" title=\"#{self.to_s}\" class=\"cards\"  >"
 
   end
 
@@ -124,15 +124,22 @@ end
 
 get "/start" do
   session[:money] = 500
-	erb :template
+  session[:char_error] = nil
+	erb :name
 end
 
 
 post '/start' do
 	
 	if params['player_name'].empty?
+    session[:char_error] = "bad"
 
-		erb :template
+		erb :name
+  elsif params['player_name'].match(/^[[:alpha:]]+$/) == nil
+    session[:char_error] = "bad"
+
+    erb :name
+    
 	else
 		session[:player_name] = params['player_name']
 		redirect "/bet"
@@ -142,14 +149,15 @@ end
 
 get "/bet" do
   session[:winner] = nil
+  session[:bet_state] = nil
   erb :bet
+
 end
 
 post "/bet" do
-
   if params['current_bet'].to_i < 1
-
-
+    puts "working"
+    session[:bet_state] = "bad"
     erb :bet
   elsif params['current_bet'].to_i > session[:money]
     erb :bet
@@ -158,7 +166,6 @@ post "/bet" do
     puts session[:money]
     redirect "/game"
   end
-
 end
 
 
@@ -183,20 +190,12 @@ get '/game' do
 	session[:player_hand].push(session[:cards].pop)
 	session[:dealer_hand].push(session[:cards].pop)
 	session[:dealer_hand].push(session[:cards].pop)
-	
-
-		
-
-
-
-
-  erb :game
+	erb :game
 end
 
 post "/game" do
   session[:player_hand].push(session[:cards].pop)
-
-  erb :game
+  erb :game, layout: false
 end
 
 post "/stay" do
@@ -205,6 +204,9 @@ post "/stay" do
   if score(session[:dealer_hand]) > score(session[:player_hand])
   else  
     while score(session[:dealer_hand]) < 17
+      if score(session[:dealer_hand]) > score(session[:player_hand])
+        break
+      end
       session[:dealer_hand].push(session[:cards].pop)
     end
   end
@@ -218,7 +220,9 @@ post "/stay" do
   else
     session[:winner] = session[:player_name]
   end
-    
+   erb :game, layout: false
+end
 
-  erb :game
+get "/thanks" do
+  erb :thanks
 end

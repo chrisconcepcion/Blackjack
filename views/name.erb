@@ -1,0 +1,11 @@
+
+<h3>Welcome to the game of Blackjack, lets begin!</h3>
+<h4>What is your name? </h4>
+<% if session[:char_error] == "bad" %>
+	<p class = "err">You can only enter characters from the alphabet as your name.</p>
+<% end %>
+
+<form action="/start" method="post">
+  <input type="text" name="player_name">
+  <input type="submit" class="btn btn-primary" value="submit name">
+</form>

@@ -1,5 +1,10 @@
-#card {
-   padding:1px;
-   border:1px solid #021a40;
-   background-color:#ff0;
+img.cards {
+	padding: 0px 10px;
+    }
+
+p.err {
+	color:rgb(255,0,0);
+	font-weight:bold;
 }
+
+form{ display: inline-block; }

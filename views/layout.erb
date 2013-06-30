@@ -3,9 +3,9 @@
   <head>
     <title>BlackJack</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
-    <link "text/css" rel="stylesheet" href="/application.css">
-    <script scr="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script type="/application.js"></script>
+    <link rel="stylesheet" href="/application.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/application.js"></script>
 
   </head>
   <body style="padding-top: 50px;">
@@ -14,15 +14,16 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <a class="brand">Let's play some Blackjack!</a>
             <ul class="nav">
               <li><a href="/">Start New Game</a></li>
+              
             </ul>
         </div>
       </div>
     </div>
 
   <div class="container">
-    <h2> Let's play some Blackjack!</h2>
     <%if @error %>
       <div class="alert alert-error"><%=@error%></div>
     <% end %>

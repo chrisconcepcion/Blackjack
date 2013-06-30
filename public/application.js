@@ -1,33 +1,32 @@
 $(document).ready(function() {
-	#("form#hit input").click(Function(){
-		alert("You clicked");
+	player_hits();
+	player_stays();
+});
+
+
+function player_hits() {
+	$(document).on("click", "form#hit input", function() {
 		$.ajax({
-			type: "POST"
+			type: "POST",
 			url: "/game"
-		})
+		}).done(function(msg){
+			$("#game").replaceWith(msg)
+		});
+		return false;
+	});
+}
 
-	})
-})
 
-$(document).ready(function() {
-	#("form#stay input").click(Function(){
-		alert("You clicked");
+function player_stays() {
+	$(document).on("click", "form#stay input", function() {
 		$.ajax({
-			type: "POST"
+			type: "POST",
 			url: "/stay"
-		})
+		}).done(function(msg){
+			$("#game").replaceWith(msg)
+		});
+		return false;
+	});
+}
 
-	})
-})
 
-
-$(document).ready(function() {
-	#("form#playagain input").click(Function(){
-		alert("You clicked");
-		$.ajax({
-			type: "GET"
-			url: "/bet"
-		})
-
-	})
-})

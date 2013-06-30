@@ -1,31 +1,19 @@
-<h3><%= session[:player_name] %>, show me what you got! </h3>
+<div id="game">
+<h4><%= session[:player_name] %>, show me what you got! </h4>
+
+<% if score(session[:player_hand]) == 21 %>
+	<% session[:winner] = session[:player_name] %>
+<% elsif score(session[:player_hand]) > 21 %>
+	<% session[:winner] = "Dealer" %>
+<% end %>
 
 <% if session[:mode] == nil %>
 	<% session[:dealer_hand][0].hide %>
 <% else %>
+	<% check_win %>
 	<% session[:dealer_hand][0].show %>
 <% end %>
-<strong><p> Player: </p></strong>
-<p><strong> Total points:</strong> <%= score(session[:player_hand]) %> </p>
 
-	<p id="card"> <% session[:player_hand].each do |card| %>
-      <%= card.show_picture %>
-    <% end %> </p>
-    
-
-<p> <strong>Dealer: </strong></p>
-<% if session[:mode] == nil %>
-	<p><strong> Total points:</strong> Unknown </p>
-<% else %>
-	<p><strong> Total points:</strong> <%= score(session[:dealer_hand]) %> </p> 
-<% end %>
-<p> <% session[:dealer_hand].each do |card| %>
-      <%= card.show_picture %>
-    <% end %> </p>
-
-
-
-<% check_win %>
 <% if session[:winner] == "Dealer" %>
 		<% session[:money] -= session[:current_bet] %> 
 	<% end %>
@@ -33,45 +21,89 @@
 
 <% if session[:winner] != nil %>
 	<% if session[:winner] == session[:player_name] %>
-		<%= session[:winner] +" wins!" %>
+		<div class="alert alert-success">
+			<h3><strong><%= session[:winner] +" wins the pot of "+(session[:current_bet]*2).to_s+" dollars!" %></strong></h3>
+		</div>
 		<% session[:money] += session[:current_bet] %>
-		<p>Current money: <%= session[:money] %></p>
+		<p><strong>Current money:</strong> <%= session[:money] %></p>
+		<p><strong>Would you like to continue playing?</strong></p>
 		<p><form id="playagain" action = "/bet" method = "get">
-  			<input type="submit" class="btn btn-success" value = "Play Again?">
-  		</form>
+  				<input type="submit" class="btn btn-success" value = "Continue playing!">
+  			</form>
+  			<form action = "/thanks" method = "get">
+  				<input type="submit" class="btn btn-success" value = "No thanks">
+  			</form>
   		</p>
 	<% elsif session[:money] == 0 %>
-	<p><%= session[:winner] +" wins!" %></p>
-	<p>Current money: <%= session[:money] %></p>
-	<p>You're out of money!</p>
-	<p><form  action = "/start" method = "get">
-  			<input type="submit" class="btn btn-success" value = "Start new game?">
-  		</form>
+		<div class="alert alert-success">
+			<h3><strong><%= session[:winner] +" wins the pot of "+(session[:current_bet]*2).to_s+" dollars!" %></strong></h3>
+		</div>
+		<p><strong>Current money:</strong> <%= session[:money] %></p>
+		<p>You're out of money!</p>
+		<p><form  action = "/start" method = "get">
+  				<input type="submit" class="btn btn-success" value = "Start new game?">
+  			</form>
   	<% elsif session[:winner] == "Both players" %>
-  	<p>It's a draw!</p>
-  	<p>Current money: <%= session[:money] %></p>
-	<p><form id="playagain" action = "/bet" method = "get">
-  			<input type="submit" class="btn btn-success" value = "Play Again?">
-  		</form>
-  	</p>
+  		<div class="alert alert-success">
+			<h3><strong>It's a draw! Both players lose their money.</strong></h3>
+		</div>
+  		<% session[:money] -= session[:current_bet] %> 
+  		<p><strong>Current money:</strong> <%= session[:money] %></p>
+  		<p><strong>Would you like to continue playing?</strong></p>
+		<p><form id="playagain" action = "/bet" method = "get">
+  				<input type="submit" class="btn btn-success" value = "Continue playing!">
+  			</form>
+  			<form action = "/thanks" method = "get">
+  				<input type="submit" class="btn btn-success" value = "No thanks">
+  			</form>
+  		</p>
  	<% else %>
- 	<%= session[:winner] +" wins!" %>
- 	<p>Current money: <%= session[:money] %></p>
-	<p><form id="playagain" action = "/bet" method = "get">
-  			<input type="submit" class="btn btn-success" value = "Play Again?">
-  		</form>
-  	</p>
- 
-	<% end %>
+ 		<div class="alert alert-success">
+			<h3><strong><%= session[:winner] +" wins the pot of "+(session[:current_bet]*2).to_s+" dollars!" %></strong></h3>
+		</div>
+ 		<p><strong>Current money:</strong> <%= session[:money] %></p>
+ 		<p><strong>Would you like to continue playing?</strong></p>
+		<p><form id="playagain" action = "/bet" method = "get">
+  				<input type="submit" class="btn btn-success" value = "Continue playing!">
+  			</form>
+  			<form action = "/thanks" method = "get">
+  				<input type="submit" class="btn btn-success" value = "No thanks">
+  			</form>
+  		</p>
+ 	<% end %>
 
 
 	
 <% else %>
-	<p><form id="hit" action = "/game" method = "post">
-  		<input type="submit" class="btn btn-success" value = "Hit">
+	<form id="hit" action = "/game" method = "post">
+  		<input type="submit" class="btn btn-success" value = "Hit" id="formWithButtons">
   	</form>
   	<form id="stay" action = "/stay" method = "post">
-  		<input type="submit" class="btn btn-success" value = "Stay">
+  		<input type="submit" class="btn btn-warning" value = "Stay" id="formWithButtons">
   	</form>
-	</p>
 <% end %>
+
+<strong><p> Player: </p></strong>
+<div class = "well">
+	<p> <% session[:player_hand].each do |card| %>
+      <%= card.show_picture %>
+    <% end %> </p>
+</div>
+<p><strong> Total points:</strong> <%= score(session[:player_hand]) %> </p>
+    
+
+<p> <strong>Dealer: </strong></p>
+<div class = "well">
+<p> <% session[:dealer_hand].each do |card| %>
+      <%= card.show_picture %>
+    <% end %> </p>
+</div>
+<% if session[:mode] == nil %>
+	<p><strong> Total points:</strong> Unknown </p>
+<% else %>
+	<p><strong> Total points:</strong> <%= score(session[:dealer_hand]) %> </p> 
+<% end %>
+
+<br>
+<br>
+</div>

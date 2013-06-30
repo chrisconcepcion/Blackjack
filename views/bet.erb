@@ -1,6 +1,15 @@
+<div id="bet">
 <h3> <%= session[:player_name] %>, how much would you like to bet? </h3>
-<p><strong>Total money:</strong> <%= session[:money] %></p>
+
+<% if session[:bet_state] == "bad" %>
+	<p class="err">Enter a number between 5 and <%= session[:money] %>.<p>
+<% end %>
+
+<h4><strong>Total money:</strong> <%= session[:money] %><h4>
+
 <form action="/bet" method="post">
   <input type="text" name="current_bet">
-  <input type="submit">
+  <input type="submit" class="btn btn-primary" value="submit wager">
 </form>
+</div>
+
